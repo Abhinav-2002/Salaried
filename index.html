@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Salaried — Dating, Filtered by Success</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --gold: #C9A84C;
+    --gold-light: #E8C97A;
+    --cream: #FAF7F2;
+    --charcoal: #1A1612;
+    --warm-gray: #6B6459;
+    --accent: #8B1A1A;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--charcoal);
+    color: var(--cream);
+    overflow-x: hidden;
+  }
+
+  /* GRAIN OVERLAY */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 999;
+    opacity: 0.4;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    padding: 24px 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 100;
+    background: linear-gradient(to bottom, rgba(26,22,18,0.9), transparent);
+  }
+
+  .logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.5rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    color: var(--gold);
+  }
+
+  .logo span { color: var(--cream); }
+
+  nav a {
+    color: var(--cream);
+    text-decoration: none;
+    font-size: 0.85rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    opacity: 0.7;
+    transition: opacity 0.2s;
+  }
+  nav a:hover { opacity: 1; }
+
+  /* HERO */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    padding: 120px 40px 80px;
+    text-align: center;
+    overflow: hidden;
+  }
+
+  .hero-bg {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse 70% 60% at 50% 40%, rgba(201,168,76,0.12) 0%, transparent 70%),
+                radial-gradient(ellipse 40% 40% at 80% 80%, rgba(139,26,26,0.08) 0%, transparent 60%);
+  }
+
+  .hero-line {
+    position: absolute;
+    left: 50%;
+    top: 0; bottom: 0;
+    width: 1px;
+    background: linear-gradient(to bottom, transparent, rgba(201,168,76,0.3), transparent);
+    transform: translateX(-50%);
+  }
+
+  .hero-content {
+    position: relative;
+    max-width: 800px;
+  }
+
+  .eyebrow {
+    display: inline-block;
+    font-size: 0.75rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--gold);
+    border: 1px solid rgba(201,168,76,0.4);
+    padding: 6px 18px;
+    border-radius: 100px;
+    margin-bottom: 32px;
+    animation: fadeUp 0.8s ease forwards;
+    opacity: 0;
+  }
+
+  .hero h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(3rem, 8vw, 6.5rem);
+    font-weight: 900;
+    line-height: 1.05;
+    margin-bottom: 28px;
+    animation: fadeUp 0.8s ease 0.15s forwards;
+    opacity: 0;
+  }
+
+  .hero h1 em {
+    font-style: italic;
+    color: var(--gold);
+  }
+
+  .hero-sub {
+    font-size: clamp(1rem, 2vw, 1.25rem);
+    color: rgba(250,247,242,0.65);
+    line-height: 1.7;
+    max-width: 540px;
+    margin: 0 auto 48px;
+    font-weight: 300;
+    animation: fadeUp 0.8s ease 0.3s forwards;
+    opacity: 0;
+  }
+
+  .cta-wrap {
+    animation: fadeUp 0.8s ease 0.45s forwards;
+    opacity: 0;
+  }
+
+  .stat-row {
+    display: flex;
+    justify-content: center;
+    gap: 60px;
+    margin-top: 80px;
+    padding-top: 60px;
+    border-top: 1px solid rgba(201,168,76,0.15);
+    animation: fadeUp 0.8s ease 0.6s forwards;
+    opacity: 0;
+  }
+
+  .stat h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--gold);
+  }
+
+  .stat p {
+    font-size: 0.8rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--warm-gray);
+    margin-top: 4px;
+  }
+
+  /* HOW IT WORKS */
+  .section {
+    padding: 120px 40px;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  .section-label {
+    font-size: 0.75rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 16px;
+  }
+
+  .section h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    font-weight: 700;
+    margin-bottom: 64px;
+    max-width: 600px;
+    line-height: 1.2;
+  }
+
+  .steps {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 2px;
+  }
+
+  .step {
+    background: rgba(250,247,242,0.03);
+    padding: 48px 36px;
+    position: relative;
+    transition: background 0.3s;
+  }
+  .step:hover { background: rgba(201,168,76,0.06); }
+
+  .step-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 4rem;
+    font-weight: 900;
+    color: rgba(201,168,76,0.15);
+    line-height: 1;
+    margin-bottom: 24px;
+  }
+
+  .step h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.4rem;
+    margin-bottom: 12px;
+    font-weight: 700;
+  }
+
+  .step p {
+    color: rgba(250,247,242,0.55);
+    line-height: 1.7;
+    font-size: 0.95rem;
+    font-weight: 300;
+  }
+
+  /* SIGNUP SECTION */
+  .signup-section {
+    padding: 120px 40px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .signup-section::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(201,168,76,0.06) 0%, transparent 50%, rgba(139,26,26,0.04) 100%);
+  }
+
+  .signup-inner {
+    max-width: 640px;
+    margin: 0 auto;
+    text-align: center;
+    position: relative;
+  }
+
+  .signup-inner h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2rem, 5vw, 3.2rem);
+    font-weight: 900;
+    margin-bottom: 16px;
+    line-height: 1.15;
+  }
+
+  .signup-inner h2 em { font-style: italic; color: var(--gold); }
+
+  .signup-inner p {
+    color: rgba(250,247,242,0.6);
+    margin-bottom: 48px;
+    font-size: 1rem;
+    font-weight: 300;
+    line-height: 1.7;
+  }
+
+  .form-group {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+
+  .form-group input, .role-select select, .form-group select {
+    flex: 1;
+    background: rgba(250,247,242,0.05);
+    border: 1px solid rgba(201,168,76,0.25);
+    color: var(--cream);
+    padding: 16px 20px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.95rem;
+    outline: none;
+    transition: border-color 0.2s, background 0.2s;
+    border-radius: 4px;
+    width: 100%;
+  }
+
+  .form-group input::placeholder { color: rgba(250,247,242,0.3); }
+  .form-group input:focus, .role-select select:focus {
+    border-color: var(--gold);
+    background: rgba(201,168,76,0.06);
+  }
+
+  .role-select {
+    margin-bottom: 16px;
+  }
+
+  .role-select select option { background: #2a2218; }
+
+  .salary-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+
+  .salary-row select {
+    background: rgba(250,247,242,0.05);
+    border: 1px solid rgba(201,168,76,0.25);
+    color: var(--cream);
+    padding: 16px 20px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.95rem;
+    outline: none;
+    transition: border-color 0.2s;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+
+  .salary-row select:focus { border-color: var(--gold); }
+  .salary-row select option { background: #2a2218; }
+
+  .btn {
+    display: inline-block;
+    padding: 18px 48px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    cursor: pointer;
+    border: none;
+    transition: all 0.25s;
+    border-radius: 4px;
+  }
+
+  .btn-gold {
+    background: var(--gold);
+    color: var(--charcoal);
+    width: 100%;
+  }
+
+  .btn-gold:hover {
+    background: var(--gold-light);
+    transform: translateY(-1px);
+    box-shadow: 0 12px 40px rgba(201,168,76,0.3);
+  }
+
+  .form-note {
+    font-size: 0.78rem;
+    color: rgba(250,247,242,0.3);
+    margin-top: 16px;
+    letter-spacing: 0.05em;
+  }
+
+  .counter-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(201,168,76,0.1);
+    border: 1px solid rgba(201,168,76,0.2);
+    border-radius: 100px;
+    padding: 8px 20px;
+    font-size: 0.82rem;
+    color: var(--gold);
+    margin-bottom: 32px;
+    letter-spacing: 0.08em;
+  }
+
+  .dot {
+    width: 6px;
+    height: 6px;
+    background: #4CAF50;
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+  }
+
+  /* SUCCESS */
+  .success-msg {
+    display: none;
+    background: rgba(201,168,76,0.1);
+    border: 1px solid rgba(201,168,76,0.4);
+    border-radius: 8px;
+    padding: 32px;
+    text-align: center;
+  }
+
+  .success-msg h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.8rem;
+    color: var(--gold);
+    margin-bottom: 8px;
+  }
+
+  .success-msg p { color: rgba(250,247,242,0.6); font-size: 0.95rem; }
+
+  /* WHY SECTION */
+  .why-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 60px;
+    align-items: center;
+  }
+
+  .why-text h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.8rem, 4vw, 3rem);
+    font-weight: 700;
+    line-height: 1.2;
+    margin-bottom: 24px;
+  }
+
+  .why-text h2 em { font-style: italic; color: var(--gold); }
+
+  .why-text p {
+    color: rgba(250,247,242,0.6);
+    line-height: 1.8;
+    font-weight: 300;
+    margin-bottom: 16px;
+  }
+
+  .research-card {
+    background: rgba(250,247,242,0.04);
+    border: 1px solid rgba(201,168,76,0.15);
+    padding: 40px;
+    position: relative;
+  }
+
+  .quote-mark {
+    font-family: 'Playfair Display', serif;
+    font-size: 8rem;
+    color: rgba(201,168,76,0.1);
+    line-height: 0.5;
+    margin-bottom: 24px;
+    display: block;
+  }
+
+  .research-card blockquote {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.2rem;
+    font-style: italic;
+    line-height: 1.7;
+    color: rgba(250,247,242,0.8);
+    margin-bottom: 20px;
+  }
+
+  .research-card cite {
+    font-size: 0.78rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--gold);
+    font-style: normal;
+  }
+
+  /* FOOTER */
+  footer {
+    padding: 48px 40px;
+    border-top: 1px solid rgba(201,168,76,0.1);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: rgba(250,247,242,0.3);
+    font-size: 0.82rem;
+  }
+
+  .footer-logo {
+    font-family: 'Playfair Display', serif;
+    color: var(--gold);
+    font-size: 1.1rem;
+  }
+
+  /* ANIMATIONS */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(1.5); }
+  }
+
+  /* RESPONSIVE */
+  @media (max-width: 768px) {
+    nav { padding: 20px 24px; }
+    .hero { padding: 100px 24px 60px; }
+    .section { padding: 80px 24px; }
+    .signup-section { padding: 80px 24px; }
+    .stat-row { gap: 32px; }
+    .stat h3 { font-size: 1.8rem; }
+    .why-grid { grid-template-columns: 1fr; }
+    .salary-row { grid-template-columns: 1fr; }
+    .form-group { flex-direction: column; }
+    footer { flex-direction: column; gap: 12px; text-align: center; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="logo">Salaried<span>.</span></div>
+  <a href="#signup">Get Early Access</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-line"></div>
+  <div class="hero-content">
+    <span class="eyebrow">The world's most honest dating app</span>
+    <h1>One filter.<br><em>Their salary.</em></h1>
+    <p class="hero-sub">No fluff. No fake bios. Just the number that matters most. Match with successful, ambitious partners — filtered by the one thing that actually predicts compatibility.</p>
+    <div class="cta-wrap">
+      <a href="#signup" class="btn btn-gold">Join the Waitlist →</a>
+    </div>
+
+    <div class="stat-row">
+      <div class="stat">
+        <h3>$150K+</h3>
+        <p>Min. verified income</p>
+      </div>
+      <div class="stat">
+        <h3>1 Filter</h3>
+        <p>Salary only</p>
+      </div>
+      <div class="stat">
+        <h3>100%</h3>
+        <p>Income verified</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WHY IT WORKS -->
+<section class="section">
+  <div class="why-grid">
+    <div class="why-text">
+      <p class="section-label">The Research</p>
+      <h2>Science says women <em>care about income.</em> We just made it honest.</h2>
+      <p>Every major study on mate selection confirms: financial security and ambition are top traits women seek in a long-term partner. Yet dating apps hide this behind endless swiping.</p>
+      <p>Salaried cuts through the noise. One filter, total transparency, real matches.</p>
+    </div>
+    <div class="research-card">
+      <span class="quote-mark">"</span>
+      <blockquote>Women consistently rank financial prospects and ambition as more critical in a partner than men do — a pattern replicated across 37 cultures worldwide.</blockquote>
+      <cite>— Journal of Personality & Social Psychology, Mate Preference Research</cite>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="section" style="padding-top:0;">
+  <p class="section-label">How It Works</p>
+  <h2>Brutally simple.<br>By design.</h2>
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">01</div>
+      <h3>Verify Your Income</h3>
+      <p>Connect your tax return or pay stub. We verify it once. Your salary badge is real — not self-reported.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">02</div>
+      <h3>Set Your Filter</h3>
+      <p>Choose your minimum salary threshold. See only profiles that meet your standard. No exceptions.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">03</div>
+      <h3>Match & Meet</h3>
+      <p>Chat with people who match your filter. No hiding the number. No awkward money conversations later.</p>
+    </div>
+  </div>
+</section>
+
+<!-- SIGNUP -->
+<section class="signup-section" id="signup">
+  <div class="signup-inner">
+    <div class="counter-badge">
+      <span class="dot"></span>
+      <span id="counter">2,847</span> people on the waitlist
+    </div>
+    <h2>Get <em>Early Access</em><br>Before We Launch</h2>
+    <p>Be among the first to join. Early members get priority matching, founding member status, and a free premium upgrade at launch.</p>
+
+    <div id="signup-form">
+      <div class="form-group">
+        <input type="text" placeholder="Your full name" id="name" required>
+      </div>
+      <div class="form-group">
+        <input type="email" placeholder="Your email address" id="email" required>
+      </div>
+      <div class="role-select">
+        <select id="gender">
+          <option value="" disabled selected>I am a... (select your gender)</option>
+          <option value="woman">Woman looking for a successful man</option>
+          <option value="man">Man — I want to get verified</option>
+          <option value="other">Other / Prefer not to say</option>
+        </select>
+      </div>
+      <div class="salary-row">
+        <select id="salary-min">
+          <option value="" disabled selected>My min. preference</option>
+          <option>$75,000 / year</option>
+          <option>$100,000 / year</option>
+          <option>$150,000 / year</option>
+          <option>$200,000 / year</option>
+          <option>$300,000 / year</option>
+          <option>$500,000+ / year</option>
+        </select>
+        <select id="city">
+          <option value="" disabled selected>Your city</option>
+          <option>New York</option>
+          <option>Los Angeles</option>
+          <option>Chicago</option>
+          <option>Miami</option>
+          <option>San Francisco</option>
+          <option>London</option>
+          <option>Toronto</option>
+          <option>Other</option>
+        </select>
+      </div>
+      <button class="btn btn-gold" id="submit-btn" onclick="handleSignup()">Secure My Early Access →</button>
+      <p class="form-note">🔒 No spam. No nonsense. We'll only email you when we launch in your city.</p>
+    </div>
+
+    <div class="success-msg" id="success">
+      <h3>You're on the list.</h3>
+      <p>Welcome to Salaried. We'll notify you the moment we launch in your city. Tell your friends — the more they sign up, the sooner we launch. 💛</p>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <span class="footer-logo">Salaried.</span>
+  <span>© 2025 Salaried Inc. · Launching Soon · hello@salaried.app</span>
+</footer>
+
+<script>
+  // Animate counter
+  let count = 2847;
+  setInterval(() => {
+    const delta = Math.floor(Math.random() * 3);
+    if (delta > 0) {
+      count += delta;
+      document.getElementById('counter').textContent = count.toLocaleString();
+    }
+  }, 8000);
+
+  // Intersection Observer for scroll animations
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.style.animation = 'fadeUp 0.7s ease forwards';
+        e.target.style.opacity = '0';
+        observer.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('.step, .research-card, .why-text').forEach(el => {
+    el.style.opacity = '0';
+    observer.observe(el);
+  });
+
+  function isValidEmail(email) {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  }
+
+  async function handleSignup() {
+    const btn = document.getElementById('submit-btn');
+    const name = document.getElementById('name').value.trim();
+    const email = document.getElementById('email').value.trim();
+    const gender = document.getElementById('gender').value;
+    const salaryMin = document.getElementById('salary-min').value || null;
+    const city = document.getElementById('city').value || null;
+
+    if (!name || !email || !gender) {
+      alert('Please fill in your name, email, and select your role.');
+      return;
+    }
+
+    if (!isValidEmail(email)) {
+      alert('Please enter a valid email address.');
+      return;
+    }
+
+    btn.disabled = true;
+    const prevText = btn.textContent;
+    btn.textContent = 'Submitting...';
+
+    try {
+      const res = await fetch('/api/waitlist', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, email, gender, salaryMin, city })
+      });
+
+      const data = await res.json().catch(() => ({}));
+
+      if (!res.ok) {
+        alert(data?.error || 'Something went wrong. Please try again.');
+        return;
+      }
+
+      document.getElementById('signup-form').style.display = 'none';
+      document.getElementById('success').style.display = 'block';
+      count += 1;
+      document.getElementById('counter').textContent = count.toLocaleString();
+    } catch (err) {
+      alert('Network error. Please try again.');
+    } finally {
+      btn.disabled = false;
+      btn.textContent = prevText;
+    }
+  }
+</script>
+</body>
+</html>
